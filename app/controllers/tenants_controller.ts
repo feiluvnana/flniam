@@ -13,6 +13,19 @@ export default class TenantsController {
   }
 
   /**
+   * @show
+   * @params id - @type(string)
+   * @responseBody 200 - {"status": 200, "data": "<Tenant>"}
+   */
+  async show({ params, response }: HttpContext) {
+    const tenant = await Tenant.find(params.id)
+    if (!tenant) {
+      return response.notFound({ status: 404, message: 'Tenant not found' })
+    }
+    return response.ok({ status: 200, data: tenant })
+  }
+
+  /**
    * @store
    * @requestBody <storeTenantValidator>
    * @responseBody 201 - {"status": 201, "data": "<Tenant>"}
@@ -21,10 +34,23 @@ export default class TenantsController {
     const data = request.all()
     const [error, payload] = await storeTenantValidator.tryValidate(data)
     if (error) {
-      console.log(error)
       return response.badRequest(error)
     }
     const tenant = await Tenant.create(payload)
     return response.created({ status: 201, data: tenant })
+  }
+
+  /**
+   * @destroy
+   * @params id - @type(string)
+   * @responseBody 204 - No Content
+   */
+  public async destroy({ params, response }: HttpContext) {
+    const tenant = await Tenant.find(params.id)
+    if (!tenant) {
+      return response.notFound({ status: 404, message: 'Tenant not found' })
+    }
+    await tenant.delete()
+    return response.noContent()
   }
 }

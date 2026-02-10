@@ -15,6 +15,19 @@ export default class RolesController {
   }
 
   /**
+   * @show
+   * @params id - @type(string)
+   * @responseBody 200 - {"status": 200, "data": "<Role>"}
+   */
+  async show({ params, response }: HttpContext) {
+    const role = await Role.find(params.id)
+    if (!role) {
+      return response.notFound({ status: 404, message: 'Role not found' })
+    }
+    return response.ok({ status: 200, data: role })
+  }
+
+  /**
    * @store
    * @requestBody <storeRoleValidator>
    * @responseBody 201 - {"status": 201, "data": "<Role>"}
@@ -35,5 +48,19 @@ export default class RolesController {
     }
     const role = await Role.create(payload)
     return response.created({ status: 201, data: role })
+  }
+
+  /**
+   * @destroy
+   * @params id - @type(string)
+   * @responseBody 204 - No Content
+   */
+  async destroy({ params, response }: HttpContext) {
+    const role = await Role.find(params.id)
+    if (!role) {
+      return response.notFound({ status: 404, message: 'Role not found' })
+    }
+    await role.delete()
+    return response.noContent()
   }
 }

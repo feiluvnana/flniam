@@ -14,6 +14,19 @@ export default class PermissionsController {
   }
 
   /**
+   * @show
+   * @params id - @type(string)
+   * @responseBody 200 - {"status": 200, "data": "<Permission>"}
+   */
+  async show({ params, response }: HttpContext) {
+    const permission = await Permission.find(params.id)
+    if (!permission) {
+      return response.notFound({ status: 404, message: 'Permission not found' })
+    }
+    return response.ok({ status: 200, data: permission })
+  }
+
+  /**
    * @store
    * @requestBody <storePermissionValidator>
    * @responseBody 201 - {"status": 201, "data": "<Permission>"}
@@ -24,11 +37,25 @@ export default class PermissionsController {
     if (error) {
       return response.badRequest(error)
     }
-    const tenant = await Tenant.findOrFail(payload.tenantId)
+    const tenant = await Tenant.find(payload.tenantId)
     if (!tenant) {
       return response.notFound({ status: 404, message: 'Tenant not found' })
     }
     const permission = await Permission.create(payload)
     return response.created({ status: 201, data: permission })
+  }
+
+  /**
+   * @destroy
+   * @params id - @type(string)
+   * @responseBody 204 - No Content
+   */
+  async destroy({ params, response }: HttpContext) {
+    const permission = await Permission.find(params.id)
+    if (!permission) {
+      return response.notFound({ status: 404, message: 'Permission not found' })
+    }
+    await permission.delete()
+    return response.ok({ status: 200, data: permission })
   }
 }

@@ -19,6 +19,18 @@ export default class PrincipalsController {
   }
 
   /**
+   * @show
+   * @responseBody 200 - {"status": 200, "data": "<Principal>"}
+   */
+  async show({ params, response }: HttpContext) {
+    const principal = await Principal.find(params.id)
+    if (!principal) {
+      return response.notFound({ status: 404, message: 'Principal not found' })
+    }
+    return response.ok({ status: 200, data: principal })
+  }
+
+  /**
    * @store
    * @requestBody <storePrincipalValidator>
    * @responseBody 201 - {"status": 201, "data": "<Principal>"}
@@ -78,5 +90,18 @@ export default class PrincipalsController {
       await principal.load('permissions')
       return response.created({ status: 201, data: principal })
     })
+  }
+
+  /**
+   * @destroy
+   * @responseBody 204 - No Content
+   */
+  async destroy({ params, response }: HttpContext) {
+    const principal = await Principal.find(params.id)
+    if (!principal) {
+      return response.notFound({ status: 404, message: 'Principal not found' })
+    }
+    await principal.delete()
+    return response.noContent()
   }
 }
