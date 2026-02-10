@@ -1,5 +1,13 @@
 import vine from '@vinejs/vine'
 
+export const indexPrincipalValidator = vine.compile(
+  vine.object({
+    tenantId: vine.string().optional(),
+    limit: vine.number().optional(),
+    lastPrincipalId: vine.string().optional(),
+  })
+)
+
 export const storePrincipalValidator = vine.compile(
   vine.object({
     tenantId: vine.string(),

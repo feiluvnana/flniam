@@ -1,5 +1,13 @@
 import vine from '@vinejs/vine'
 
+export const indexPermissionValidator = vine.create(
+  vine.object({
+    tenantId: vine.string().optional(),
+    limit: vine.number().optional(),
+    lastPermissionId: vine.string().optional(),
+  })
+)
+
 export const storePermissionValidator = vine.create(
   vine.object({
     tenantId: vine.string(),

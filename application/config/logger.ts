@@ -6,6 +6,7 @@ const loggerConfig = defineConfig({
   loggers: {
     app: {
       enabled: true,
+      level: 'debug',
       transport: {
         targets: targets()
           .pushIf(!app.inProduction, targets.pretty())

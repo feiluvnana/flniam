@@ -1,6 +1,6 @@
 import Permission from '#models/permission'
 import Tenant from '#models/tenant'
-import { storePermissionValidator } from '#validators/permission'
+import { indexPermissionValidator, storePermissionValidator } from '#validators/permission'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class PermissionsController {
@@ -8,9 +8,29 @@ export default class PermissionsController {
    * @index
    * @responseBody 200 - {"status": 200, "data": "<Permission[]>"}
    */
-  async index({ response }: HttpContext) {
-    const permissions = await Permission.all()
-    return response.ok({ status: 200, data: permissions })
+  async index({ request, response }: HttpContext) {
+    const data = request.all()
+    const [error, payload] = await indexPermissionValidator.tryValidate(data)
+    if (error) {
+      return response.badRequest(error)
+    }
+    const limit = payload.limit || 10
+    const permissionQuery = Permission.query()
+      .orderBy('id', 'asc')
+      .limit(limit + 1)
+
+    if (payload.tenantId) {
+      permissionQuery.where('tenant_id', payload.tenantId)
+    }
+    if (payload.lastPermissionId) {
+      permissionQuery.andWhere('id', '>', payload.lastPermissionId)
+    }
+
+    const permissions = await permissionQuery.exec()
+    return response.ok({
+      data: permissions.slice(0, limit),
+      lastPermissionId: permissions.length > limit ? permissions[limit].id : null,
+    })
   }
 
   /**
@@ -21,9 +41,9 @@ export default class PermissionsController {
   async show({ params, response }: HttpContext) {
     const permission = await Permission.find(params.id)
     if (!permission) {
-      return response.notFound({ status: 404, message: 'Permission not found' })
+      return response.notFound({ message: 'Permission not found' })
     }
-    return response.ok({ status: 200, data: permission })
+    return response.ok({ data: permission })
   }
 
   /**
@@ -39,10 +59,10 @@ export default class PermissionsController {
     }
     const tenant = await Tenant.find(payload.tenantId)
     if (!tenant) {
-      return response.notFound({ status: 404, message: 'Tenant not found' })
+      return response.notFound({ message: 'Tenant not found' })
     }
     const permission = await Permission.create(payload)
-    return response.created({ status: 201, data: permission })
+    return response.created({ data: permission })
   }
 
   /**
@@ -53,9 +73,9 @@ export default class PermissionsController {
   async destroy({ params, response }: HttpContext) {
     const permission = await Permission.find(params.id)
     if (!permission) {
-      return response.notFound({ status: 404, message: 'Permission not found' })
+      return response.notFound({ message: 'Permission not found' })
     }
     await permission.delete()
-    return response.ok({ status: 200, data: permission })
+    return response.ok({ data: permission })
   }
 }
