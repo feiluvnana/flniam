@@ -1,0 +1,68 @@
+{
+  "dependencies": {
+    "@adonisjs/core": "^6.18.0",
+    "@adonisjs/lucid": "^21.8.2",
+    "@vinejs/vine": "^4.3.0",
+    "adonis-autoswagger": "^3.73.0",
+    "better-sqlite3": "^12.6.2",
+    "luxon": "^3.7.2",
+    "reflect-metadata": "^0.2.2"
+  },
+  "devDependencies": {
+    "@adonisjs/assembler": "^7.8.2",
+    "@adonisjs/eslint-config": "^2.0.0",
+    "@adonisjs/prettier-config": "^1.4.4",
+    "@adonisjs/tsconfig": "^1.4.0",
+    "@swc/core": "1.11.24",
+    "@types/luxon": "^3.7.1",
+    "@types/node": "^22.15.18",
+    "eslint": "^9.26.0",
+    "hot-hook": "^0.4.0",
+    "pino-pretty": "^13.0.0",
+    "prettier": "^3.5.3",
+    "ts-node-maintained": "^10.9.5",
+    "typescript": "~5.8"
+  },
+  "eslintConfig": {
+    "extends": "@adonisjs/eslint-config/app"
+  },
+  "hotHook": {
+    "boundaries": [
+      "./app/controllers/**/*.ts",
+      "./app/middleware/*.ts"
+    ]
+  },
+  "imports": {
+    "#abilities/*": "./app/abilities/*.js",
+    "#config/*": "./config/*.js",
+    "#controllers/*": "./app/controllers/*.js",
+    "#database/*": "./database/*.js",
+    "#events/*": "./app/events/*.js",
+    "#exceptions/*": "./app/exceptions/*.js",
+    "#listeners/*": "./app/listeners/*.js",
+    "#mails/*": "./app/mails/*.js",
+    "#middleware/*": "./app/middleware/*.js",
+    "#models/*": "./app/models/*.js",
+    "#policies/*": "./app/policies/*.js",
+    "#providers/*": "./providers/*.js",
+    "#services/*": "./app/services/*.js",
+    "#start/*": "./start/*.js",
+    "#utils/*": "./app/utils/*.js",
+    "#validators/*": "./app/validators/*.js"
+  },
+  "license": "UNLICENSED",
+  "name": "flniam",
+  "prettier": "@adonisjs/prettier-config",
+  "private": true,
+  "scripts": {
+    "build": "node ace build",
+    "dev": "node ace serve --watch",
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "start": "node bin/server.js",
+    "test": "node ace test",
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module",
+  "version": "0.0.0"
+}
