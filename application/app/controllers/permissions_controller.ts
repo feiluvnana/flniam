@@ -1,81 +1,80 @@
-import Permission from '#models/permission'
-import Tenant from '#models/tenant'
-import { indexPermissionValidator, storePermissionValidator } from '#validators/permission'
+import { PermissionService } from '#services/permission_service'
+import {
+  indexPermissionValidator,
+  storePermissionValidator,
+  updatePermissionValidator,
+} from '#validators/permission'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class PermissionsController {
+  constructor(private permissionService: PermissionService) {}
+
   /**
    * @index
-   * @responseBody 200 - {"status": 200, "data": "<Permission[]>"}
+   * @paramQuery limit -  - @type(number)
+   * @paramQuery lastPermissionId -  - @type(string)
+   * @responseBody 200 - {"data": "<Permission[]>", "hasMore": "<boolean>", "lastPermissionId": "<string>"}
    */
-  async index({ request, response }: HttpContext) {
-    const data = request.all()
-    const [error, payload] = await indexPermissionValidator.tryValidate(data)
-    if (error) {
-      return response.badRequest(error)
-    }
+  async index({ tenant, request, response }: HttpContext) {
+    const payload = await indexPermissionValidator.validate(request.all())
     const limit = payload.limit || 10
-    const permissionQuery = Permission.query()
-      .orderBy('id', 'asc')
-      .limit(limit + 1)
-
-    if (payload.tenantId) {
-      permissionQuery.where('tenant_id', payload.tenantId)
-    }
-    if (payload.lastPermissionId) {
-      permissionQuery.andWhere('id', '>', payload.lastPermissionId)
-    }
-
-    const permissions = await permissionQuery.exec()
-    return response.ok({
-      data: permissions.slice(0, limit),
-      lastPermissionId: permissions.length > limit ? permissions[limit].id : null,
-    })
+    const result = await this.permissionService.paginateOrFail(
+      tenant.id,
+      limit,
+      payload.lastPermissionId
+    )
+    return response.ok(result)
   }
 
   /**
    * @show
-   * @params id - @type(string)
-   * @responseBody 200 - {"status": 200, "data": "<Permission>"}
+   * @paramPath id -  - @type(string)
+   * @responseBody 200 - {"data": "<Permission>"}
    */
-  async show({ params, response }: HttpContext) {
-    const permission = await Permission.find(params.id)
-    if (!permission) {
-      return response.notFound({ message: 'Permission not found' })
-    }
+  async show({ tenant, params, response }: HttpContext) {
+    const permission = await this.permissionService.findOrFail(tenant.id, params.id)
     return response.ok({ data: permission })
   }
 
   /**
    * @store
    * @requestBody <storePermissionValidator>
-   * @responseBody 201 - {"status": 201, "data": "<Permission>"}
+   * @responseBody 201 - {"data": "<Permission>"}
    */
-  async store({ request, response }: HttpContext) {
-    const data = request.all()
-    const [error, payload] = await storePermissionValidator.tryValidate(data)
-    if (error) {
-      return response.badRequest(error)
-    }
-    const tenant = await Tenant.find(payload.tenantId)
-    if (!tenant) {
-      return response.notFound({ message: 'Tenant not found' })
-    }
-    const permission = await Permission.create(payload)
+  async store({ tenant, request, response }: HttpContext) {
+    const payload = await storePermissionValidator.validate(request.all())
+    const permission = await this.permissionService.createOrFail(
+      tenant.id,
+      payload.action,
+      payload.resource
+    )
     return response.created({ data: permission })
   }
 
   /**
+   * @update
+   * @paramPath id -  - @type(string)
+   * @requestBody <updatePermissionValidator>
+   * @responseBody 200 - {"data": "<Permission>"}
+   */
+  async update({ tenant, params, request, response }: HttpContext) {
+    const payload = await updatePermissionValidator.validate(request.all())
+    const permission = await this.permissionService.updateOrFail(
+      tenant.id,
+      params.id,
+      payload.action,
+      payload.resource
+    )
+    return response.ok({ data: permission })
+  }
+
+  /**
    * @destroy
-   * @params id - @type(string)
+   * @paramPath id -  - @type(string)
    * @responseBody 204 - No Content
    */
-  async destroy({ params, response }: HttpContext) {
-    const permission = await Permission.find(params.id)
-    if (!permission) {
-      return response.notFound({ message: 'Permission not found' })
-    }
-    await permission.delete()
-    return response.ok({ data: permission })
+  async destroy({ tenant, params, response }: HttpContext) {
+    await this.permissionService.deleteOrFail(tenant.id, params.id)
+    return response.noContent()
   }
 }

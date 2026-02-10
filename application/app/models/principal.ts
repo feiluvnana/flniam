@@ -12,7 +12,7 @@ export default class Principal extends BaseModel {
   @column({ isPrimary: true })
   declare id: string
 
-  @column({ columnName: 'tenant_id' })
+  @column()
   declare tenantId: string
 
   @column()

@@ -12,6 +12,9 @@ export default class Tenant extends BaseModel {
   declare name: string
 
   @column()
+  declare secret: string
+
+  @column()
   declare description: string | null
 
   @column.dateTime({ autoCreate: true })
@@ -23,5 +26,10 @@ export default class Tenant extends BaseModel {
   @beforeCreate()
   public static async generateId(tenant: Tenant) {
     tenant.id = Generators.id('tnt')
+  }
+
+  @beforeCreate()
+  public static async generateSecret(tenant: Tenant) {
+    tenant.secret = Generators.secret()
   }
 }

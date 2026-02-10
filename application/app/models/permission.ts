@@ -8,7 +8,7 @@ export default class Permission extends BaseModel {
   @column({ isPrimary: true })
   declare id: string
 
-  @column({ columnName: 'tenant_id' })
+  @column()
   declare tenantId: string
 
   @column()

@@ -11,6 +11,9 @@ export default class Role extends BaseModel {
   declare id: string
 
   @column()
+  declare tenantId: string
+
+  @column()
   declare name: string
 
   @manyToMany(() => Permission, {

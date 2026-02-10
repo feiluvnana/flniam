@@ -1,18 +1,15 @@
 import vine from '@vinejs/vine'
 
-export const indexPrincipalValidator = vine.compile(
+export const indexPrincipalValidator = vine.create(
   vine.object({
-    tenantId: vine.string().optional(),
     limit: vine.number().optional(),
     lastPrincipalId: vine.string().optional(),
   })
 )
 
-export const storePrincipalValidator = vine.compile(
+export const storePrincipalValidator = vine.create(
   vine.object({
-    tenantId: vine.string(),
     type: vine.enum(['user', 'service_account']),
-    status: vine.enum(['active', 'inactive']),
     user: vine
       .object({
         username: vine.string(),
