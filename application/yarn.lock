@@ -3668,7 +3668,7 @@ ts-morph@^23.0.0:
     "@ts-morph/common" "~0.24.0"
     code-block-writer "^13.0.1"
 
-ts-node-maintained@^10.9.5:
+ts-node-maintained@^10.9.6:
   version "10.9.6"
   resolved "https://registry.yarnpkg.com/ts-node-maintained/-/ts-node-maintained-10.9.6.tgz#986361a630c1cb3b66bce8c24ae0b0e9202a425e"
   integrity sha512-m/1ZCksNnIofWjmY5/K+6y8oia05Y/5+vMWTvuFzrr6UGRV7ImrLMyYAB06cHlwBW5/NuYeZoh44mAOGNRNxZA==

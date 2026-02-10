@@ -1,7 +1,7 @@
 import Permission from '#models/permission'
 import Role from '#models/role'
 import Tenant from '#models/tenant'
-import { storeRoleValidator } from '#validators/roles_validator'
+import { storeRoleValidator } from '#validators/role'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class RolesController {

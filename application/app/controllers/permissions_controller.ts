@@ -1,6 +1,6 @@
 import Permission from '#models/permission'
 import Tenant from '#models/tenant'
-import { storePermissionValidator } from '#validators/permissions_validator'
+import { storePermissionValidator } from '#validators/permission'
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class PermissionsController {

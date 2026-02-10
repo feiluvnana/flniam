@@ -1,6 +1,6 @@
 import vine from '@vinejs/vine'
 
-export const storeRoleValidator = vine.compile(
+export const storeRoleValidator = vine.create(
   vine.object({
     tenantId: vine.string(),
     name: vine.string(),

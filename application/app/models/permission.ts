@@ -17,18 +17,6 @@ export default class Permission extends BaseModel {
   @column()
   declare resource: string
 
-  @column({
-    prepare: (value: string[] | null) => (value ? JSON.stringify(value) : null),
-    consume: (value: string | null) => (value ? JSON.parse(value) : null),
-  })
-  declare fields: string[] | null
-
-  @column({
-    prepare: (value: string | null) => (value ? JSON.stringify(value) : null),
-    consume: (value: string | null) => (value ? JSON.parse(value) : null),
-  })
-  declare condition: Record<string, unknown> | null
-
   @column.dateTime({ columnName: 'created_at', autoCreate: true })
   declare createdAt: DateTime
 

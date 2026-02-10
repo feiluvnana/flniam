@@ -10,7 +10,6 @@ router.get('/docs', async () => {
 })
 
 const TenantsController = () => import('#controllers/tenants_controller')
-router.get('tenants', [TenantsController, 'index'])
 router.get('tenants/:id', [TenantsController, 'show'])
 router.post('tenants', [TenantsController, 'store'])
 router.delete('tenants/:id', [TenantsController, 'destroy'])
