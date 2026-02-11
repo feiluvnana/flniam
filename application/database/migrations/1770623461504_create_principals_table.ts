@@ -7,8 +7,8 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.string('id').primary()
       table.string('tenant_id').notNullable()
-      table.string('type').notNullable()
-      table.string('status').notNullable()
+      table.enum('type', ['user', 'service_account']).notNullable()
+      table.enum('status', ['active', 'archived', 'suspended']).notNullable().defaultTo('active')
       table.timestamp('created_at')
       table.timestamp('updated_at')
       table.foreign('tenant_id').references('id').inTable('tenants').onDelete('CASCADE')

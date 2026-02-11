@@ -9,6 +9,7 @@ export default class extends BaseSchema {
       table.string('name').notNullable()
       table.string('secret').notNullable()
       table.string('description').nullable()
+      table.enum('status', ['active', 'archived', 'suspended']).notNullable().defaultTo('active')
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })
