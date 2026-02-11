@@ -4,8 +4,10 @@ import {
   storePermissionValidator,
   updatePermissionValidator,
 } from '#validators/permission'
+import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
+@inject()
 export default class PermissionsController {
   constructor(private permissionService: PermissionService) {}
 
@@ -13,7 +15,7 @@ export default class PermissionsController {
    * @index
    * @paramQuery limit -  - @type(number)
    * @paramQuery lastPermissionId -  - @type(string)
-   * @responseBody 200 - {"data": "<Permission[]>", "hasMore": "<boolean>", "lastPermissionId": "<string>"}
+   * @responseBody 200 - {"data": "<Permission[]>", "hasMore": "boolean", "lastPermissionId": "string"}
    */
   async index({ tenant, request, response }: HttpContext) {
     const payload = await indexPermissionValidator.validate(request.all())

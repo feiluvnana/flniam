@@ -11,7 +11,7 @@ export default class Tenant extends BaseModel {
   @column()
   declare name: string
 
-  @column()
+  @column({ serializeAs: null })
   declare secret: string
 
   @column()

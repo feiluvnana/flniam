@@ -2,8 +2,10 @@ import Role from '#models/role'
 import { PermissionService } from '#services/permission_service'
 import { RoleService } from '#services/role_service'
 import { indexRoleValidator, storeRoleValidator } from '#validators/role'
+import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
+@inject()
 export default class RolesController {
   constructor(
     private readonly roleService: RoleService,

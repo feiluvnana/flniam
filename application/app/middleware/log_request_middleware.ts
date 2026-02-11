@@ -4,8 +4,8 @@ import { NextFn } from '@adonisjs/core/types/http'
 export default class LogRequestMiddleware {
   async handle(ctx: HttpContext, next: NextFn) {
     const { request, logger, response } = ctx
-    const output = await next()
+    const result = await next()
     logger.info(`${request.method()} ${request.url()} ${response.getStatus()}`)
-    return output
+    return result
   }
 }

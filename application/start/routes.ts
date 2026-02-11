@@ -30,5 +30,4 @@ router
     router.get('principals/:id', [PrincipalsController, 'show'])
     router.delete('principals/:id', [PrincipalsController, 'destroy'])
   })
-  .use([() => import('@adonisjs/core/bodyparser_middleware')])
   .use([() => import('#middleware/has_tenant_middleware')])
