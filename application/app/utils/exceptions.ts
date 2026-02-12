@@ -7,7 +7,7 @@ export class ApiException extends Error {
   }
 }
 
-export class ApiError extends ApiException {
+export class ApiBadRequestError extends ApiException {
   constructor(message: string) {
     super(message, 400)
   }

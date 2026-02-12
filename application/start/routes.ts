@@ -1,6 +1,7 @@
 import swagger from '#config/swagger'
 import router from '@adonisjs/core/services/router'
 import AutoSwagger from 'adonis-autoswagger'
+import { middleware } from './kernel.js'
 
 router.group(() => {
   router.get('/swagger', async () => {
@@ -10,6 +11,18 @@ router.group(() => {
     return AutoSwagger.default.ui('/swagger', swagger)
   })
 })
+
+router.group(() => {
+  const TenantsController = () => import('#controllers/tenants_controller')
+  router.post('tenants', [TenantsController, 'store'])
+})
+
+router
+  .group(() => {
+    const AuthController = () => import('#controllers/auth_controller')
+    router.post('auth/check', [AuthController, 'check'])
+  })
+  .use([middleware.hasTenant(), middleware.hasPrincipal()])
 
 router
   .group(() => {
@@ -30,4 +43,4 @@ router
     router.get('principals/:id', [PrincipalsController, 'show'])
     router.delete('principals/:id', [PrincipalsController, 'destroy'])
   })
-  .use([() => import('#middleware/has_tenant_middleware')])
+  .use(middleware.hasTenant())

@@ -5,6 +5,7 @@ export interface PermissionLike {
 
 export default class Authorizators {
   private static WILDCARD = '*'
+  private static RESOURCE_DELIMITER = ','
   private static SUBRESOURCE_DELIMITER = '/'
   private static FIELD_DELIMITER = '.'
 
@@ -15,7 +16,23 @@ export default class Authorizators {
    * @returns Array of request permissions that are not authorized by has
    */
   static check(request: PermissionLike[], has: PermissionLike[]): PermissionLike[] {
-    return request.filter((req) => !has.some((h) => this.isAuthorized(req, h)))
+    const newRequest: PermissionLike[][] = request.map((req) => {
+      const resourceParts = req.resource.split(this.RESOURCE_DELIMITER)
+      return resourceParts.map((resource) => ({
+        action: req.action,
+        resource,
+      }))
+    })
+    const hasParts: PermissionLike[][] = has.map((h) => {
+      const resourceParts = h.resource.split(this.RESOURCE_DELIMITER)
+      return resourceParts.map((resource) => ({
+        action: h.action,
+        resource,
+      }))
+    })
+    return newRequest
+      .flat()
+      .filter((req) => !hasParts.flat().some((h) => this.isAuthorized(req, h)))
   }
 
   /**

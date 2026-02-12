@@ -15,9 +15,9 @@ export default class HasTenantMiddleware {
     try {
       const tenant = await this.tenantService.findByIdAndSecretOrFail(id, secret)
       ctx.tenant = tenant
+      return next()
     } catch (error) {
       return ctx.response.badRequest({ message: 'Tenant not found' })
     }
-    return next()
   }
 }

@@ -1,5 +1,5 @@
 import Tenant from '#models/tenant'
-import { ApiNotFoundError } from '#utils/exceptions'
+import { ApiBadRequestError, ApiNotFoundError } from '#utils/exceptions'
 import Generators from '#utils/generators'
 import hash from '@adonisjs/core/services/hash'
 
@@ -12,19 +12,21 @@ export class TenantService {
 
   async findByIdAndSecretOrFail(id: string, secret: string) {
     const tenant = await Tenant.findOrFail(id)
-    if (!(await hash.use('sha256').verify(tenant.secret, secret))) {
+    if (!(await hash.use('bcrypt').verify(tenant.secret, secret))) {
       throw new ApiNotFoundError('Tenant not found')
     }
     return tenant
   }
 
   async createOrFail(name: string, description?: string): Promise<Tenant> {
+    let tenant = await Tenant.query().where('name', name).first()
+    if (tenant) throw new ApiBadRequestError('Tenant already exists')
     const secret = Generators.secret()
-    const tenant = await Tenant.create({
+    tenant = await Tenant.create({
       name,
       description,
-      secret: await hash.use('sha256').make(secret),
+      secret: await hash.use('bcrypt').make(secret),
     })
-    return { ...tenant, secret }
+    return { ...tenant.serialize(), secret } as Tenant
   }
 }

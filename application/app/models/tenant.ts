@@ -27,9 +27,4 @@ export default class Tenant extends BaseModel {
   public static async generateId(tenant: Tenant) {
     tenant.id = Generators.id('tnt')
   }
-
-  @beforeCreate()
-  public static async generateSecret(tenant: Tenant) {
-    tenant.secret = Generators.secret()
-  }
 }
